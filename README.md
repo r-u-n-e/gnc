@@ -15,3 +15,4 @@ This is what we do :)
 | Full Name                     | Nickname       | Role         | Email Address                      | Discord                        |
 | :---------------------------- | :------------: | ------------ | ---------------------------------- | ------------------------------ |
 | Jacob Patrick Reed            | Jake           | Advisor(?)   | reed.jacobp@gmail.com              | jakethasnek#0898               |
+| Etsub Mechal                  | Etsub          | Member       | etsub1021@gmail.com                | mercato#7538                   |
