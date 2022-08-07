@@ -16,3 +16,4 @@ This is what we do :)
 | :---------------------------- | :------------: | ------------ | ---------------------------------- | ------------------------------ |
 | Jacob Patrick Reed            | Jake           | Advisor(?)   | reed.jacobp@gmail.com              | jakethasnek#0898               |
 | Etsub Mechal                  | Etsub          | Member       | etsub1021@gmail.com                | mercato#7538                   |
+| Alejandro Rodriquez           | Arod           | Member       | rodria93@unlv.nevada.edu           | ARod#0852                      |
