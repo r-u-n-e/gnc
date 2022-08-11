@@ -14,6 +14,7 @@ This is what we do :)
 
 | Full Name                     | Nickname       | Role         | Email Address                      | Discord                        |
 | :---------------------------- | :------------: | ------------ | ---------------------------------- | ------------------------------ |
-| Jacob Patrick Reed            | Jake           | Advisor(?)   | reed.jacobp@gmail.com              | jakethasnek#0898               |
+| Batya Vishnepolsky            | Batya          | Lead         | vishnepo@unlv.nevada.edu           | Vish#2574                      |
+| Jacob Patrick Reed            | Jake           | Advisor      | reed.jacobp@gmail.com              | jakethasnek#0898               |
 | Etsub Mechal                  | Etsub          | Member       | etsub1021@gmail.com                | mercato#7538                   |
 | Alejandro Rodriquez           | Arod           | Member       | rodria93@unlv.nevada.edu           | ARod#0852                      |
