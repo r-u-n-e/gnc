@@ -8,7 +8,8 @@
 # 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+#from Basilisk.utilities import orbitalMotion, macros, vizSupport, simIncludeGravBody
+from RS_BSK.dist3.Basilisk.utilities import orbitalMotion, macros, vizSupport, simIncludeGravBody
 
 # Get current file path
 import sys, os, inspect
@@ -50,23 +51,35 @@ class scenario_RS1(RS1Sim, RS1Scenario):
                                             )
 
     def configure_initial_conditions(self):
-        DynModels = self.get_DynModel()
 
-        # Configure Dynamics initial conditions
+        
+        # setup Earth's gravitational field
+        # TODO: not sure if I can use gravBodies from RS1DynamicModels::SetGravityBodies()
+        gravFactory = simIncludeGravBody.gravBodyFactory()
+        planet = gravFactory.createEarth()
+        planet.isCentralBody = True                 # ensure this is the central gravitational body
+        mu = planet.mu                              # gravitational constant of Earth
+        
+        # setup the orbit using classical orbit elements (https://en.wikipedia.org/wiki/Orbital_elements)
+        periapsis = 413 * 1000                      # closest point of orbit to Earth (m)
+        apoapsis = 422 * 1000                       # furthest point of orbit from Earth (m)
         oe = orbitalMotion.ClassicElements()
-        oe.a = 7000000.0  # meters
-        oe.e = 0.1
-        oe.i = 33.3 * macros.D2R
-        oe.Omega = 48.2 * macros.D2R
-        oe.omega = 347.8 * macros.D2R
-        oe.f = 85.3 * macros.D2R
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
-        rN, vN = orbitalMotion.elem2rv(mu, oe)
-        orbitalMotion.rv2elem(mu, rN, vN)
-        DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        oe.a = (periapsis + apoapsis) / 2.0         # semi-major axis (documentation says km, examples use m) (http://hanspeterschaub.info/basilisk/Documentation/utilities/orbitalMotion.html)
+        oe.e = 0.0003492                            # eccentricity (no units)
+        oe.i = 51.6439 * macros.D2R                 # inclination (rad)
+        oe.Omega = 346.7648 * macros.D2R            # longitude of ascending node (aka where orbit passes reference plane) (rad)
+        oe.omega = 165.4333 * macros.D2R            # argument of periapsis (aka oreintation of ellipse in orbital plane) (rad)
+        oe.f = 298.6058 * macros.D2R                # true anomaly angle (aka position of orbiting body along ellipse at epoch time) (rad)
+        rN, vN = orbitalMotion.elem2rv(mu, oe)      # position vector, velocity vector
+        oe = orbitalMotion.rv2elem(mu, rN, vN)      # stores consistent initial orbit elements
+        
+        # define initial conditions of spacecraft states
+        DynModels = self.get_DynModel()
+        DynModels.scObject.hub.r_CN_NInit = rN      # inertial position of spacecraft (m)
+        DynModels.scObject.hub.v_CN_NInit = vN      # inertial velocity of spacecraft (m/s)
+        DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]        # initial attitude of B frame in Modified Rodrigues Parameters (MRP)
+        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # initial angular velocity of B frame in B frame
+        
 
     def log_outputs(self):
         # Dynamics process outputs
