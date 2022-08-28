@@ -8,8 +8,7 @@
 # 
 
 # Import utilities
-#from Basilisk.utilities import orbitalMotion, macros, vizSupport, simIncludeGravBody
-from RS_BSK.dist3.Basilisk.utilities import orbitalMotion, macros, vizSupport, simIncludeGravBody
+from Basilisk.utilities import orbitalMotion, macros, vizSupport, simIncludeGravBody
 
 # Get current file path
 import sys, os, inspect
@@ -51,7 +50,7 @@ class scenario_RS1(RS1Sim, RS1Scenario):
                                             )
 
     def configure_initial_conditions(self):
-
+        DynModels = self.get_DynModel()
         
         # setup Earth's gravitational field
         # TODO: not sure if I can use gravBodies from RS1DynamicModels::SetGravityBodies()
@@ -73,7 +72,6 @@ class scenario_RS1(RS1Sim, RS1Scenario):
         oe = orbitalMotion.rv2elem(mu, rN, vN)      # stores consistent initial orbit elements
         
         # define initial conditions of spacecraft states
-        DynModels = self.get_DynModel()
         DynModels.scObject.hub.r_CN_NInit = rN      # inertial position of spacecraft (m)
         DynModels.scObject.hub.v_CN_NInit = vN      # inertial velocity of spacecraft (m/s)
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]        # initial attitude of B frame in Modified Rodrigues Parameters (MRP)
