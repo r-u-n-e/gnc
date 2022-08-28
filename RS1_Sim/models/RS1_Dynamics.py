@@ -11,7 +11,7 @@ import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
-                                 reactionWheelStateEffector, coarseSunSensor, eclipse)
+                                 reactionWheelStateEffector, coarseSunSensor, eclipse, magneticFieldWMM)
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.utilities import simIncludeThruster
@@ -47,6 +47,7 @@ class RS1DynamicModels():
         # Instantiate Dyn modules as objects
         self.scObject = spacecraft.Spacecraft()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
+        self.magModule = magneticFieldWMM.MagneticFieldWMM()
         self.rwFactory = simIncludeRW.rwFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.simpleNavObject = simpleNav.SimpleNav()
@@ -63,6 +64,7 @@ class RS1DynamicModels():
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
+        SimBase.AddModelToTask(self.taskName, self.magModule, 198)                  # TODO: change priority
         SimBase.AddModelToTask(self.taskName, self.EarthEphemObject, 199)
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 108)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
@@ -119,6 +121,21 @@ class RS1DynamicModels():
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
+
+    def SetMagneticFieldEarth(self):
+        """
+        Specify Earth's magnetic field based on the World Magnetic Model
+        """
+        # create the magnetic field
+        self.magModule.ModelTag = "WMM"
+        self.magModule.dataPath = bskPath + '/supportData/MagneticField/'
+
+        # set the minReach and maxReach values of the magnetic field
+        self.magModule.envMinReach = 10000*1000.         # TODO: change this to non-placeholder values
+        self.magModule.envMaxReach = 20000*1000.
+        
+        # add spacecraft to the magnetic field module so it can read the sc position messages
+        self.magModule.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetEclipseObject(self):
         """
@@ -289,6 +306,7 @@ class RS1DynamicModels():
         """
         self.SetSpacecraftHub()
         self.SetGravityBodies()
+        self.SetMagneticFieldEarth()
         self.SetExternalForceTorqueObject()
         self.SetSimpleNavObject()
         self.SetEclipseObject()
