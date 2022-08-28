@@ -59,19 +59,21 @@ class scenario_RS1(RS1Sim, RS1Scenario):
         mu = earth.mu                               # gravitational constant of Earth
         
         # setup the orbit using classical orbit elements (https://en.wikipedia.org/wiki/Orbital_elements)
-        periapsis = 413 * 1000                      # closest point of orbit to Earth (m)
-        apoapsis = 422 * 1000                       # furthest point of orbit from Earth (m)
+        # ISS orbit as of 8/27/2022 (using https://www.heavens-above.com/orbit.aspx?satid=25544)
+        periapsis = 414 * 1000                      # closest point of orbit to Earth (m)
+        apoapsis = 419 * 1000                       # furthest point of orbit from Earth (m)
         oe = orbitalMotion.ClassicElements()
         oe.a = (periapsis + apoapsis) / 2.0         # semi-major axis (documentation says km, examples use m) (http://hanspeterschaub.info/basilisk/Documentation/utilities/orbitalMotion.html)
-        oe.e = 0.0003492                            # eccentricity (no units)
-        oe.i = 51.6439 * macros.D2R                 # inclination (rad)
-        oe.Omega = 346.7648 * macros.D2R            # longitude of ascending node (aka where orbit passes reference plane) (rad)
-        oe.omega = 165.4333 * macros.D2R            # argument of periapsis (aka oreintation of ellipse in orbital plane) (rad)
-        oe.f = 298.6058 * macros.D2R                # true anomaly angle (aka position of orbiting body along ellipse at epoch time) (rad)
+        oe.e = 0.0003322                            # eccentricity (no units)
+        oe.i = 51.6444 * macros.D2R                 # inclination (rad)
+        oe.Omega = 343.2506 * macros.D2R            # longitude of ascending node (aka where orbit passes reference plane) (rad)
+        oe.omega = 168.6908 * macros.D2R            # argument of periapsis (aka oreintation of ellipse in orbital plane) (rad)
+        oe.f = 295.0282 * macros.D2R                # true anomaly angle (aka position of orbiting body along ellipse at epoch time) (rad)
         rN, vN = orbitalMotion.elem2rv(mu, oe)      # position vector, velocity vector
         oe = orbitalMotion.rv2elem(mu, rN, vN)      # stores consistent initial orbit elements
         
         # define initial conditions of spacecraft states
+        # TODO: determine attitude and angular velocity
         DynModels.scObject.hub.r_CN_NInit = rN      # inertial position of spacecraft (m)
         DynModels.scObject.hub.v_CN_NInit = vN      # inertial velocity of spacecraft (m/s)
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]        # initial attitude of B frame in Modified Rodrigues Parameters (MRP)
