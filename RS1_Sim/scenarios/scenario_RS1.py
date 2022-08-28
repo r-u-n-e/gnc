@@ -55,10 +55,9 @@ class scenario_RS1(RS1Sim, RS1Scenario):
         
         # setup Earth's gravitational field
         # TODO: not sure if I can use gravBodies from RS1DynamicModels::SetGravityBodies()
-        gravFactory = simIncludeGravBody.gravBodyFactory()
-        planet = gravFactory.createEarth()
-        planet.isCentralBody = True                 # ensure this is the central gravitational body
-        mu = planet.mu                              # gravitational constant of Earth
+        earth = DynModels.gravFactory.createEarth()
+        earth.isCentralBody = True                  # ensure this is the central gravitational body
+        mu = earth.mu                               # gravitational constant of Earth
         
         # setup the orbit using classical orbit elements (https://en.wikipedia.org/wiki/Orbital_elements)
         periapsis = 413 * 1000                      # closest point of orbit to Earth (m)
